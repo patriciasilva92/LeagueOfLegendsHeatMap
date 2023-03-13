@@ -1,69 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>D3 Test</title>
-        <script type="text/javascript" src="d3/d3.v3.js"></script>
-        <style type="text/css">
-            
-        </style>
-    </head>
-    <body>
-        
-        <script type="text/javascript">
-            var w = 512;
-            var h = 512;
-            var numBoxes = 128;
-            var boxSize = w / numBoxes;
+  <head>
+    <meta charset="utf-8">
+    <title>Heatmap Test</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card mt-5">
+            <div class="card-body">
+              <div class="heatmap-container">
+                <svg class="heatmap"></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- D3 and heatmap.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="C:\Users\estre_cjf8jab\PycharmProjects\LeagueOfLegendsHeatMap\heatmap.js"></script>
 
-            var dataset = [];
-            for ( var i = 0; i < numBoxes; i++){
-                for (var j = 0; j < numBoxes; j++){
-                    dataset.push([i, j, Math.random()])
-                }
+    <script type="text/javascript">
+      var w = 512;
+      var h = 512;
+      var numBoxes = 128;
+      var boxSize = w / numBoxes;
 
-            };
-            
-            console.log(dataset)
+      var svg = d3.select('.heatmap')
+                  .attr('width', w)
+                  .attr('height', h);
 
+      var bg = "https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/blteee710504baccf73/618e1709d11a66021302719a/objective_bounty_map.png?disposition=inline";
 
-            var bg = "https://s3-us-west-1.amazonaws.com/riot-api/img/minimap-ig.png";
+      svg.append('image')
+         .attr('xlink:href', bg)
+         .attr('x', '0')
+         .attr('y', '0')
+         .attr('width', w)
+         .attr('height', h);
 
-            var svg = d3.select('body')
-                         .append('svg')
-                         .attr('width', w)
-                         .attr('height', h);
+      d3.json("heatmap_data.json").then(function(dataset) {
 
-            svg.append('image')
-                .attr('xlink:href', bg)
-                .attr('x', '0')
-                .attr('y', '0')
-                .attr('width', w)
-                .attr('height', h);
+        svg.selectAll('rect')
+           .data(dataset)
+           .enter()
+           .append('rect')
+           .attr('x', function(d) {
+             return d.X * boxSize;
+           })
+           .attr('y', function(d) {
+             return d.Y * boxSize;
+           })
+           .attr('width', boxSize)
+           .attr('height', boxSize)
+           .attr('opacity', function(d) {
+             return d.freq;
+           })
+           .attr('fill', 'grey');
+      });
+    </script>
 
-            svg.selectAll('rect')
-               .data(dataset)
-               .enter()
-               .append('rect')
-               .attr('x', function(d) {
-                return d[0] * boxSize ;
-                })
-               .attr('y', function(d) {
-                return d[1] * boxSize;
-               })
-               .attr('width', boxSize)
-               .attr('height', boxSize)
-               .attr('opacity', function(d){
-                return d[2] ;
-               })
-               .attr('fill', 'red')
-               ;
-
-
-
-
-        </script>
-    
-    </body>
-</html>     
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

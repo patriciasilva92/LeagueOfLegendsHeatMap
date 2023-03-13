@@ -1,37 +1,37 @@
 import requests, time
 
 
-def getSummonerId(username):
+def getSummonerId(name):
 	# username : the username used by the player to sign onto League of Legends
 	#
 	# returns : summonerId , id number corresponding to given username
 
 	# get summoner ID
-	url = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/' + username + '?api_key=[API KEY HERE]'
+	url = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + name + '?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
 	response = requests.get(url)
 	response_json = response.json()
-	#print("SummonerId: " + str(summonerId))
+	#print("SummonerId: " + str(id))
 
-	summonerId = response_json[username]['id']
-	return summonerId
+	puuid = response_json['puuid']
+
+
+	return puuid
 	
 
-def getMatchIds(summonerId):
+def getMatchIds(puuid):
 	# summonerId : id number for the given player username, use getSummonerId to get this value
 	#
 	# returns : matchIds , a list of all matchId numbers for every ranked game played by the player
 	# get Match IDS
-	url = 'https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/' + str(summonerId) + '?api_key=[API KEY HERE]'
+	url = 'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/' + str(puuid) + '/ids/?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
 	response = requests.get(url)
 	response_json = response.json()
 
-	matchIds = []
-	for item in response_json['matches']:
-		matchIds.append(item['matchId'])
+
 
 	#print("Number of ranked matches played: " + str(len(matchIds)))
 
-	return matchIds
+	return response_json
 	
 
 def getPositionData(matchIds, data):
@@ -51,7 +51,7 @@ def getPositionData(matchIds, data):
 		# build url for API request
 
 		#print(matchId)
-		url = 'https://na.api.pvp.net/api/lol/na/v2.2/match/' + str(matchId) + '?includeTimeline=true&api_key=[API KEY HERE]'
+		url = 'https://europe.api.riotgames.com/lol/match/v5/matches/' + str(matchId) + '/timeline/?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
 		#print(url)
 		response = requests.get(url)
 		response_json = response.json()
@@ -61,7 +61,7 @@ def getPositionData(matchIds, data):
 		# Might be something to do with API server
 		try: 
 
-			for frame in response_json['timeline']['frames']:
+			for frame in response_json['info']['frames']:
 				# sometimes the last frame of a game does not contain position data, use try for error checking
 			    try:
 				    data.append([frame['participantFrames']['1']['position']['x'] , frame['participantFrames']['1']['position']['y']])
@@ -100,9 +100,9 @@ def writeToFile(data):
 
 
 def main():
-	username = 'andhint'
-	summonerId = getSummonerId(username)
-	matchIds = getMatchIds(summonerId)
+	name = 'Acroda92'
+	puuid = getSummonerId(name)
+	matchIds = getMatchIds(puuid)
 	#testMatchIds = matchIds[0:15]
 	#print(matchIds)
 	data = []
