@@ -1,4 +1,4 @@
-import time,requests
+import time,requests, config
 
 
 def getPUUID(username):
@@ -12,7 +12,7 @@ def getPUUID(username):
     "Accept-Language": "en-US,en;q=0.8",
     "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
     "Origin": "https://developer.riotgames.com",
-    "X-Riot-Token": "RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6"})
+    "X-Riot-Token": config.api_key})
 	response_json = response.json()
 	#print("SummonerId: " + str(summonerId))
 	#print(str(response_json))
@@ -30,7 +30,7 @@ def getMatchIds(PUUID):
     "Accept-Language": "en-US,en;q=0.8",
     "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
     "Origin": "https://developer.riotgames.com",
-    "X-Riot-Token": "RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6"})
+    "X-Riot-Token": config.api_key})
 	response_json = response.json()
 	#print(str(response))
 	#print(str(response_json))
@@ -66,7 +66,7 @@ def getPositionData(matchIds, data):
 		"Accept-Language": "en-US,en;q=0.8",
 		"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
 		"Origin": "https://developer.riotgames.com",
-		"X-Riot-Token": "RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6"})
+		"X-Riot-Token": config.api_key})
 		response_json = response.json()
 		#data.append('START OF MATCH: ' + str(matchId))
 
