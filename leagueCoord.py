@@ -7,11 +7,15 @@ def getPUUID(username):
 	# returns : summonerId , id number corresponding to given username
 
 	# get summoner ID
-	url = 'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + username + '?api_key=[RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6]'
-	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36","Accept-Language": "en-US,en;q=0.8","Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8","Origin": "https://developer.riotgames.com"})
+	url = 'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + username
+	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Origin": "https://developer.riotgames.com",
+    "X-Riot-Token": "RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6"})
 	response_json = response.json()
 	#print("SummonerId: " + str(summonerId))
-	print(str(response_json))
+	#print(str(response_json))
 	PUUID = response_json['puuid']
 	return PUUID
 	
@@ -21,13 +25,19 @@ def getMatchIds(PUUID):
 	#
 	# returns : matchIds , a list of all matchId numbers for every ranked game played by the player
 	# get Match IDS
-	url = 'https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/' + str(PUUID) + '?api_key=[RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6]'
-	response = requests.get(url)
+	url = 'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/' + str(PUUID) + '/ids?start=0&count=20'
+	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Origin": "https://developer.riotgames.com",
+    "X-Riot-Token": "RGAPI-4b9da20f-1e5b-4840-a1b7-1d3c65e4a4b6"})
 	response_json = response.json()
-
+	#print(str(response))
+	#print(str(response_json))
 	matchIds = []
-	for item in response_json['matches']:
-		matchIds.append(item['matchId'])
+
+	for x in response_json:
+		matchIds.append(x)
 
 	#print("Number of ranked matches played: " + str(len(matchIds)))
 
@@ -44,7 +54,7 @@ def getPositionData(matchIds, data):
 	delay = 1.5
 	loopTime = 2
 	timeToRun = len(matchIds) * ( delay + loopTime )
-	print("Estimated time to run : " + str(timeToRun))
+	#print("Estimated time to run : " + str(timeToRun))
 
 	# get position data [x,y] for every player for each match ID and append it to data list
 	for matchId in matchIds:
@@ -103,11 +113,13 @@ def main():
 	username = 'Keeplivin'
 	PUUID = getPUUID(username)
 	matchIds = getMatchIds(PUUID)
-	#testMatchIds = matchIds[0:15]
-	#print(matchIds)
+	testMatchIds = matchIds[0:15]
+	print(username)
+	print(matchIds)
 	data = []
 	data = getPositionData(matchIds, data)
 	writeToFile(data)
+	print("done")
 	
 
 
