@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\d3"
   ],
-  "SelectedNode": "\\C:\\Users\\delif\\Source\\Repos\\LeagueOfLegendsHeatMap",
+  "SelectedNode": "\\leagueCoord.py",
   "PreviewInSolutionExplorer": false
 }
