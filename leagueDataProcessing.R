@@ -1,7 +1,7 @@
 cat("\014")
 rm(list=ls())
 
-setwd("C:/Users/Andrew/Documents/Projects/RiotAPI/LeagueOfLegendsHeatMap")
+setwd("C:/Users/delif/Documents/source/repos/LeagueOfLegendsHeatMap")
 df <- read.table("heatMapData.txt", sep = ",", col.names = c('X' , 'Y'))
 
 library("entropy")
