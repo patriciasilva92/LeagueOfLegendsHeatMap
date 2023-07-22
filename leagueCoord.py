@@ -62,26 +62,26 @@ def getPositionData(matchIds, data):
 		try: 
 
 			for frame in response_json['timeline']['frames']:
-				# sometimes the last frame of a game does not contain position data, use try for error checking
-			    try:
-				    data.append([frame['participantFrames']['1']['position']['x'] , frame['participantFrames']['1']['position']['y']])
-				    data.append( [frame['participantFrames']['2']['position']['x'] , frame['participantFrames']['2']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['3']['position']['x'] , frame['participantFrames']['3']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['4']['position']['x'] , frame['participantFrames']['4']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['5']['position']['x'] , frame['participantFrames']['5']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['6']['position']['x'] , frame['participantFrames']['6']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['7']['position']['x'] , frame['participantFrames']['7']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['8']['position']['x'] , frame['participantFrames']['8']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['9']['position']['x'] , frame['participantFrames']['9']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['10']['position']['x'] , frame['participantFrames']['10']['position']['y'] ] )
-			    except KeyError:
-			    	continue
+	# sometimes the last frame of a game does not contain position data, use try for error checking
+				try:
+					data.append([frame['participantFrames']['1']['position']['x'] , frame['participantFrames']['1']['position']['y']])
+					data.append( [frame['participantFrames']['2']['position']['x'] , frame['participantFrames']['2']['position']['y'] ] )
+					data.append( [frame['participantFrames']['3']['position']['x'] , frame['participantFrames']['3']['position']['y'] ] )
+					data.append( [frame['participantFrames']['4']['position']['x'] , frame['participantFrames']['4']['position']['y'] ] )
+					data.append( [frame['participantFrames']['5']['position']['x'] , frame['participantFrames']['5']['position']['y'] ] )
+					data.append( [frame['participantFrames']['6']['position']['x'] , frame['participantFrames']['6']['position']['y'] ] )
+					data.append( [frame['participantFrames']['7']['position']['x'] , frame['participantFrames']['7']['position']['y'] ] )
+					data.append( [frame['participantFrames']['8']['position']['x'] , frame['participantFrames']['8']['position']['y'] ] )
+					data.append( [frame['participantFrames']['9']['position']['x'] , frame['participantFrames']['9']['position']['y'] ] )
+					data.append( [frame['participantFrames']['10']['position']['x'] , frame['participantFrames']['10']['position']['y'] ] )
+				except KeyError:
+					continue
 
 		except KeyError:
 			continue
 
-		# delay loop so API request limit is not exceeded
-		time.sleep(delay)
+			# delay loop so API request limit is not exceeded
+			time.sleep(delay)
 
 	return data
 
@@ -100,7 +100,7 @@ def writeToFile(data):
 
 
 def main():
-	username = 'andhint'
+	username = 'Keeplivin'
 	summonerId = getSummonerId(username)
 	matchIds = getMatchIds(summonerId)
 	#testMatchIds = matchIds[0:15]
