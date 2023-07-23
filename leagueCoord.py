@@ -1,12 +1,16 @@
 import time,requests, config
 
 
+
 def getPUUID(username):
+
+
 	# username : the username used by the player to sign onto League of Legends
 	#
 	# returns : summonerId , id number corresponding to given username
 
 	# get summoner ID
+
 	url = 'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + username
 	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.8",
@@ -21,10 +25,12 @@ def getPUUID(username):
 	
 
 def getMatchIds(PUUID):
+
 	# summonerId : id number for the given player username, use getSummonerId to get this value
 	#
 	# returns : matchIds , a list of all matchId numbers for every ranked game played by the player
 	# get Match IDS
+
 	url = 'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/' + str(PUUID) + '/ids?start=0&count=20'
 	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.8",
@@ -39,9 +45,10 @@ def getMatchIds(PUUID):
 	for x in response_json:
 		matchIds.append(x)
 
+
 	#print("Number of ranked matches played: " + str(len(matchIds)))
 
-	return matchIds
+	return response_json
 	
 
 def getPositionData(matchIds, data):
@@ -61,12 +68,14 @@ def getPositionData(matchIds, data):
 		# build url for API request
 
 		#print(matchId)
+
 		url = 'https://americas.api.riotgames.com/lol/match/v5/matches/' + str(matchId) +'/timeline'
 		response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
 		"Accept-Language": "en-US,en;q=0.8",
 		"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
 		"Origin": "https://developer.riotgames.com",
 		"X-Riot-Token": config.api_key})
+
 		response_json = response.json()
 		#data.append('START OF MATCH: ' + str(matchId))
 
@@ -74,11 +83,13 @@ def getPositionData(matchIds, data):
 		# Might be something to do with API server
 		# print(str(response))
 
+
 		snap = response_json['info']['frames']
 
 		x=0
 		try: 
 				for frame in snap:
+
 				# sometimes the last frame of a game does not contain position data, use try for error checking
 					try:
 						x=x+1
@@ -115,12 +126,14 @@ def writeToFile(data):
 
 
 def main():
+
 	username = 'Keeplivin'
 	PUUID = getPUUID(username)
 	matchIds = getMatchIds(PUUID)
 	testMatchIds = matchIds[0:15]
 	print(username)
 	print(matchIds)
+
 	data = []
 	data = getPositionData(matchIds, data)
 	#print(data)
