@@ -1,9 +1,11 @@
+
 library(entropy)
 library(RColorBrewer)
 library(ggplot2)
 library(jsonlite)
 
-setwd("C:/Users/estre_cjf8jab/PycharmProjects/LeagueOfLegendsHeatMap")
+
+setwd("C:/Users/delif/Documents/source/repos/LeagueOfLegendsHeatMap")
 df <- read.table("heatMapData.txt", sep = ",", col.names = c('X', 'Y'), strip.white = TRUE)
 
 # separate X and Y values for discretizing function

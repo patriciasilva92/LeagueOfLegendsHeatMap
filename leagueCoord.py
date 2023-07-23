@@ -1,32 +1,49 @@
-import requests, time
+import time,requests, config
 
 
-def getSummonerId(name):
+
+def getPUUID(username):
+
+
 	# username : the username used by the player to sign onto League of Legends
 	#
 	# returns : summonerId , id number corresponding to given username
 
 	# get summoner ID
-	url = 'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + name + '?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
-	response = requests.get(url)
+
+	url = 'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/' + username
+	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Origin": "https://developer.riotgames.com",
+    "X-Riot-Token": config.api_key})
 	response_json = response.json()
-	#print("SummonerId: " + str(id))
-
-	puuid = response_json['puuid']
-
-
-	return puuid
+	#print("SummonerId: " + str(summonerId))
+	#print(str(response_json))
+	PUUID = response_json['puuid']
+	return PUUID
 	
 
-def getMatchIds(puuid):
+def getMatchIds(PUUID):
+
 	# summonerId : id number for the given player username, use getSummonerId to get this value
 	#
 	# returns : matchIds , a list of all matchId numbers for every ranked game played by the player
 	# get Match IDS
-	url = 'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/' + str(puuid) + '/ids/?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
-	response = requests.get(url)
-	response_json = response.json()
 
+	url = 'https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/' + str(PUUID) + '/ids?start=0&count=20'
+	response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.8",
+    "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Origin": "https://developer.riotgames.com",
+    "X-Riot-Token": config.api_key})
+	response_json = response.json()
+	#print(str(response))
+	#print(str(response_json))
+	matchIds = []
+
+	for x in response_json:
+		matchIds.append(x)
 
 
 	#print("Number of ranked matches played: " + str(len(matchIds)))
@@ -44,45 +61,54 @@ def getPositionData(matchIds, data):
 	delay = 1.5
 	loopTime = 2
 	timeToRun = len(matchIds) * ( delay + loopTime )
-	print("Estimated time to run : " + str(timeToRun))
+	#print("Estimated time to run : " + str(timeToRun))
 
 	# get position data [x,y] for every player for each match ID and append it to data list
 	for matchId in matchIds:
 		# build url for API request
 
 		#print(matchId)
-		url = 'https://europe.api.riotgames.com/lol/match/v5/matches/' + str(matchId) + '/timeline/?api_key=RGAPI-74c2c1c6-0252-4ee0-8f7d-ac0a128f34fb'
-		#print(url)
-		response = requests.get(url)
+
+		url = 'https://americas.api.riotgames.com/lol/match/v5/matches/' + str(matchId) +'/timeline'
+		response = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+		"Accept-Language": "en-US,en;q=0.8",
+		"Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
+		"Origin": "https://developer.riotgames.com",
+		"X-Riot-Token": config.api_key})
+
 		response_json = response.json()
 		#data.append('START OF MATCH: ' + str(matchId))
 
 		# Getting errors on certain matches, use try to skip these. Not sure why but error will be given on different matches when script is rerun. 
 		# Might be something to do with API server
-		try: 
+		# print(str(response))
 
-			for frame in response_json['info']['frames']:
+
+		snap = response_json['info']['frames']
+
+		x=0
+		try: 
+				for frame in snap:
+
 				# sometimes the last frame of a game does not contain position data, use try for error checking
-			    try:
-				    data.append([frame['participantFrames']['1']['position']['x'] , frame['participantFrames']['1']['position']['y']])
-				    data.append( [frame['participantFrames']['2']['position']['x'] , frame['participantFrames']['2']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['3']['position']['x'] , frame['participantFrames']['3']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['4']['position']['x'] , frame['participantFrames']['4']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['5']['position']['x'] , frame['participantFrames']['5']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['6']['position']['x'] , frame['participantFrames']['6']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['7']['position']['x'] , frame['participantFrames']['7']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['8']['position']['x'] , frame['participantFrames']['8']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['9']['position']['x'] , frame['participantFrames']['9']['position']['y'] ] )
-				    data.append( [frame['participantFrames']['10']['position']['x'] , frame['participantFrames']['10']['position']['y'] ] )
-			    except KeyError:
-			    	continue
+					try:
+						x=x+1
+						#print(str(x) + '\n')
+						data.append([frame['participantFrames']['1']['position']['x'] , frame['participantFrames']['1']['position']['y']])
+						data.append( [frame['participantFrames']['2']['position']['x'] , frame['participantFrames']['2']['position']['y'] ] )
+						data.append( [frame['participantFrames']['3']['position']['x'] , frame['participantFrames']['3']['position']['y'] ] )
+						data.append( [frame['participantFrames']['4']['position']['x'] , frame['participantFrames']['4']['position']['y'] ] )
+						data.append( [frame['participantFrames']['5']['position']['x'] , frame['participantFrames']['5']['position']['y'] ] )
+						data.append( [frame['participantFrames']['6']['position']['x'] , frame['participantFrames']['6']['position']['y'] ] )
+						data.append( [frame['participantFrames']['7']['position']['x'] , frame['participantFrames']['7']['position']['y'] ] )
+						data.append( [frame['participantFrames']['8']['position']['x'] , frame['participantFrames']['8']['position']['y'] ] )
+						data.append( [frame['participantFrames']['9']['position']['x'] , frame['participantFrames']['9']['position']['y'] ] )
+						data.append( [frame['participantFrames']['10']['position']['x'] , frame['participantFrames']['10']['position']['y'] ] )
+					except KeyError:
+						continue
 
 		except KeyError:
 			continue
-
-		# delay loop so API request limit is not exceeded
-		time.sleep(delay)
-
 	return data
 
 def writeToFile(data):
@@ -100,14 +126,19 @@ def writeToFile(data):
 
 
 def main():
-	name = 'Acroda92'
-	puuid = getSummonerId(name)
-	matchIds = getMatchIds(puuid)
-	#testMatchIds = matchIds[0:15]
-	#print(matchIds)
+
+	username = 'Keeplivin'
+	PUUID = getPUUID(username)
+	matchIds = getMatchIds(PUUID)
+	testMatchIds = matchIds[0:15]
+	print(username)
+	print(matchIds)
+
 	data = []
 	data = getPositionData(matchIds, data)
+	#print(data)
 	writeToFile(data)
+	print("done")
 	
 
 
